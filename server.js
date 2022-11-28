@@ -1,14 +1,22 @@
+import * as dotenv from "dotenv";
+dotenv.config();
 import express from "express";
+import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { corsOptions } from "./config/corsOptions.js";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import routes from "./routes/root.js";
-import { logger } from "./middleware/logger.js";
+import { logger, logEvents } from "./middleware/logger.js";
 import errorHandler from "./middleware/errorHandler.js";
+import routes from "./routes/root.js";
+import { connectDB } from "./config/dbConn.js";
 
 const app = express();
+
+console.log(process.env.NODE_ENV);
+connectDB();
+
 const port = process.env.PORT || 8000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -37,4 +45,12 @@ app.all("*", (req, res) => {
 
 app.use(errorHandler);
 
-app.listen(port, () => console.log(`Server started at ${port}`));
+mongoose.connection.once("open", () => {
+  console.log("Connected to MongoDB");
+  app.listen(port, () => console.log(`Server started at ${port}`));
+});
+
+mongoose.connection.on("error", (err) => {
+  console.error(err);
+  logEvents(`${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`, "mongoErrLog.log");
+});
