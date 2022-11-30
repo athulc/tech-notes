@@ -10,6 +10,7 @@ import { dirname, join } from "path";
 import { logger, logEvents } from "./middleware/logger.js";
 import errorHandler from "./middleware/errorHandler.js";
 import routes from "./routes/root.js";
+import userRoutes from "./routes/userRoutes.js";
 import { connectDB } from "./config/dbConn.js";
 
 const app = express();
@@ -31,6 +32,7 @@ app.use(cookieParser());
 app.use("/", express.static(join(__dirname, "public")));
 
 app.use("/", routes);
+app.use("/users", userRoutes);
 
 app.all("*", (req, res) => {
   res.status(404);
