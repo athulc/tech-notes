@@ -33,7 +33,7 @@ const login = expressAsyncHandler(async (req, res) => {
       },
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "1m" }
+    { expiresIn: "15m" }
   );
 
   const refreshtoken = jwt.sign(
@@ -41,7 +41,7 @@ const login = expressAsyncHandler(async (req, res) => {
       username: foundUser.username,
     },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "1d" }
+    { expiresIn: "7d" }
   );
 
   //Create secure cookie with refresh token
@@ -68,7 +68,9 @@ const refresh = (req, res) => {
 
   const refreshToken = cookies.jwt;
 
-  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET),
+  jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET,
     expressAsyncHandler(async (err, decoded) => {
       console.log(decoded);
       if (err) {
@@ -83,19 +85,20 @@ const refresh = (req, res) => {
       }
 
       console.log(foundUser);
-      const accessToken = jwt.sign(
+      const accesstoken = jwt.sign(
         {
-          Userinfo: {
+          UserInfo: {
             username: foundUser.username,
             roles: foundUser.roles,
           },
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "1m" }
+        { expiresIn: "15m" }
       );
 
-      res.json({ accessToken });
-    });
+      res.json({ accesstoken });
+    })
+  );
 };
 
 // @desc Logout
