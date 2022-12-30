@@ -14,6 +14,7 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import notesRoutes from "./routes/noteRoutes.js";
 import { connectDB } from "./config/dbConn.js";
+import "express-async-errors";
 
 const app = express();
 
