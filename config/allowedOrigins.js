@@ -1,1 +1,1 @@
-export const allowedOrigins = ["http://localhost:3000", "https://www.google.com"];
+export const allowedOrigins = ["https://poetic-brigadeiros-7bbd83.netlify.app"];
